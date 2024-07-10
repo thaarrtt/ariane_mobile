@@ -1,9 +1,5 @@
 import 'package:carousel_slider_plus/carousel_slider_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-import 'package:loggy/loggy.dart';
 
 class NewsCarousel extends StatefulWidget {
   const NewsCarousel({super.key});
@@ -13,35 +9,12 @@ class NewsCarousel extends StatefulWidget {
 }
 
 class _NewsCarouselState extends State<NewsCarousel> {
-  List<dynamic> _news = [];
-  bool _isLoading = true;
+  final List<dynamic> _news = [];
+  final bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    fetchNews();
-  }
-
-  Future<void> fetchNews() async {
-    const url = 'https://jsonplaceholder.typicode.com/posts';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          _news = data.take(10).toList(); // Take only 10 items for demo
-          _isLoading = false;
-        });
-      } else {
-        throw Exception('Failed to load news');
-      }
-    } catch (e) {
-      logError('Error: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   @override

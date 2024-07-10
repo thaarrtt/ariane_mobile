@@ -1,7 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:loggy/loggy.dart';
+import 'package:oidc/oidc.dart';
+
+const kAuthorizationHeader = 'Authorization';
+void _tryAppendAccessToken(
+  OidcUserManager userManager,
+  Map<String, dynamic> headers,
+) {
+  if (headers.containsKey(kAuthorizationHeader)) {
+    // do nothing if header already exists.
+    return;
+  }
+  final accessToken = userManager.currentUser?.token.accessToken;
+  if (accessToken != null) {
+    headers[kAuthorizationHeader] = 'Bearer $accessToken';
+  }
+}
 
 class LoggerInterceptor implements Interceptor {
+  LoggerInterceptor({required this.userManager});
+  final OidcUserManager userManager;
+
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     logError('❌ Dio Error!');
@@ -16,6 +35,7 @@ class LoggerInterceptor implements Interceptor {
     logInfo('-------------------------');
     logInfo('🌍 Sending network request: ${options.baseUrl}${options.path}');
     logInfo('-------------------------');
+    _tryAppendAccessToken(userManager, options.headers);
     return handler.next(options);
   }
 

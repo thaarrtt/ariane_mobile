@@ -1,129 +1,49 @@
-import 'package:ariane_mobile/common/pages/auth.dart';
-import 'package:ariane_mobile/common/pages/home.dart';
-import 'package:ariane_mobile/common/pages/secret_page.dart';
-import 'package:bdaya_shared_value/bdaya_shared_value.dart';
+import 'package:ariane_mobile/app_init.dart';
+import 'package:ariane_mobile/common/utils/app_theme.dart';
+import 'package:ariane_mobile/common/utils/state_logger.dart';
+import 'package:ariane_mobile/router/router.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:oidc/oidc.dart';
-import 'package:url_strategy/url_strategy.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:ariane_mobile/auth/handler/app_state.dart' as app_state;
+void main() async {
+  await appInit().whenComplete(() {
+    runApp(
+      const ProviderScope(
+        observers: [StateLogger()],
+        child: MainApp(),
+      ),
+    );
+  });
+}
 
-// void main() async {
-//   await appInit().whenComplete(() {
-//     runApp(
-//       const ProviderScope(
-//         observers: [StateLogger()],
-//         child: MainApp(),
-//       ),
-//     );
-//   });
-// }
+class MainApp extends ConsumerWidget {
+  const MainApp({super.key});
 
-// class MainApp extends ConsumerWidget {
-//   const MainApp({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
 
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//     final router = ref.watch(routerProvider);
-
-//     return ScreenUtilInit(
-//       designSize: ScreenUtil.defaultSize,
-//       builder: (ctx, _) => MaterialApp.router(
-//         builder: (context, child) {
-//           return MaterialApp(
-//             debugShowCheckedModeBanner: false,
-//             // theme: AppThemes.lightThemeData,
-//             home: child,
-//             navigatorObservers: [
-//               FlutterSmartDialog.observer,
-//             ],
-//             builder: FlutterSmartDialog.init(),
-//           );
-//         },
-//         restorationScopeId: 'app',
-//         theme: AppThemes.lightThemeData,
-//         debugShowCheckedModeBanner: false,
-//         routerConfig: router,
-//       ),
-//     );
-//   }
-// }
-
-void main() {
-  setPathUrlStrategy();
-
-  runApp(
-    SharedValue.wrapApp(
-      MaterialApp.router(
-        theme: ThemeData(
-          useMaterial3: true,
-        ),
-        routerConfig: GoRouter(
-          routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, state) => const HomePage(),
-            ),
-            GoRoute(
-              path: '/secret-route',
-              redirect: (context, state) {
-                final user = app_state.cachedAuthedUser.of(context);
-
-                if (user == null) {
-                  return Uri(
-                    path: '/auth',
-                    queryParameters: {
-                      // Note that this requires setPathUrlStrategy(); from `package:url_strategy`
-                      // and set
-                      OidcConstants_Store.originalUri: state.uri.toString(),
-                    },
-                  ).toString();
-                }
-                return null;
-              },
-              builder: (context, state) => const SecretPage(),
-            ),
-            GoRoute(
-              path: '/auth',
-              redirect: (context, state) {
-                //
-                final user = app_state.cachedAuthedUser.of(context);
-                if (user != null) {
-                  final originalUri = state
-                      .uri.queryParameters[OidcConstants_Store.originalUri];
-                  if (originalUri != null) {
-                    return originalUri;
-                  }
-                  return '/secret-route';
-                }
-                return null;
-              },
-              builder: (context, state) => const AuthPage(),
-            ),
-          ],
-        ),
+    return ScreenUtilInit(
+      designSize: ScreenUtil.defaultSize,
+      builder: (ctx, _) => MaterialApp.router(
         builder: (context, child) {
-          /// A platform-agnostic way to initialize
-          /// the app state before displaying the routes.
-          return FutureBuilder(
-            future: app_state.initApp(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(
-                  child: CircularProgressIndicator.adaptive(),
-                );
-              }
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-              return child!;
-            },
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            // theme: AppThemes.lightThemeData,
+            home: child,
+            navigatorObservers: [
+              FlutterSmartDialog.observer,
+            ],
+            builder: FlutterSmartDialog.init(),
           );
         },
+        restorationScopeId: 'app',
+        theme: AppThemes.lightThemeData,
+        debugShowCheckedModeBanner: false,
+        routerConfig: router,
       ),
-    ),
-  );
+    );
+  }
 }

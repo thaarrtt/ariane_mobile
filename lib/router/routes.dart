@@ -1,15 +1,19 @@
 import 'dart:async';
 
+import 'package:ariane_mobile/auth/service/oidc_service.dart';
+import 'package:ariane_mobile/common/pages/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ariane_mobile/common/pages/admin_page.dart';
 import 'package:ariane_mobile/common/pages/details_page.dart';
 import 'package:ariane_mobile/common/pages/guest_page.dart';
-import 'package:ariane_mobile/auth/view/login_page.dart';
 import 'package:ariane_mobile/common/pages/regist_page.dart';
 import 'package:ariane_mobile/common/pages/splash_page.dart';
 import 'package:ariane_mobile/home/view/chat_detail.dart';
 import 'package:ariane_mobile/home/view/home_page.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:loggy/loggy.dart';
+import 'package:oidc/oidc.dart';
 
 part 'routes.g.dart';
 
@@ -26,6 +30,25 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
+  FutureOr<String?> redirect(BuildContext context, GoRouterState state) async {
+    final container = ProviderScope.containerOf(context);
+    final userAsync = container.read(currentUserProvider);
+
+    // If authentication state is loading, show splash screen
+    if (userAsync.isLoading) {
+      return const SplashRoute().location;
+    }
+
+    // If there's an authentication error or user is not authenticated, redirect to login
+    if (userAsync.hasError || userAsync.value == null) {
+      return const LoginRoute().location;
+    }
+
+    // User is authenticated, allow access to home page
+    return null;
+  }
+
+  @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomePage1();
   }
@@ -34,6 +57,41 @@ class HomeRoute extends GoRouteData {
 @TypedGoRoute<SplashRoute>(path: '/splash')
 class SplashRoute extends GoRouteData {
   const SplashRoute();
+
+  @override
+  FutureOr<String?> redirect(BuildContext context, GoRouterState state) async {
+    final container = ProviderScope.containerOf(context);
+
+    final userAsync = container.read(currentUserProvider);
+
+    logInfo('User state: ${userAsync.toString()}');
+
+    if (userAsync.isLoading) {
+      logInfo('Still loading, staying on splash');
+    }
+
+    if (userAsync.hasError) {
+      logInfo('Error in authentication, redirecting to login');
+      return const LoginRoute().location;
+    }
+
+    final user = userAsync.value;
+
+    if (user != null) {
+      logInfo('User authenticated');
+      final originalUri =
+          state.uri.queryParameters[OidcConstants_Store.originalUri];
+      if (originalUri != null) {
+        logInfo('Redirecting to original URI: $originalUri');
+        return originalUri;
+      }
+      logInfo('Redirecting to home');
+      return const HomeRoute().location;
+    } else {
+      logInfo('User not authenticated, redirecting to login');
+      return const LoginRoute().location;
+    }
+  }
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
@@ -47,7 +105,7 @@ class LoginRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const LoginPage();
+    return const AuthPage1();
   }
 }
 

@@ -1,52 +1,49 @@
 // ignore_for_file: avoid_redundant_argument_values
 
+import 'package:ariane_mobile/auth/service/oidc_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:loggy/loggy.dart';
 import 'package:oidc/oidc.dart';
-import 'package:ariane_mobile/auth/handler/app_state.dart' as app_state;
 
-class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
-
-  @override
-  State<AuthPage> createState() => _AuthPageState();
-}
-
-class _AuthPageState extends State<AuthPage> {
-  final userNameController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  OidcPlatformSpecificOptions_Web_NavigationMode webNavigationMode =
-      OidcPlatformSpecificOptions_Web_NavigationMode.newPage;
-
-  bool allowInsecureConnections = false;
-  bool preferEphemeralSession = false;
-
-  OidcPlatformSpecificOptions _getOptions() {
-    return OidcPlatformSpecificOptions(
-      web: OidcPlatformSpecificOptions_Web(
-        navigationMode: webNavigationMode,
-        popupHeight: 800,
-        popupWidth: 730,
-      ),
-      // these settings are from https://pub.dev/packages/flutter_appauth.
-      android: OidcPlatformSpecificOptions_AppAuth_Android(
-        allowInsecureConnections: allowInsecureConnections,
-      ),
-      ios: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        preferEphemeralSession: preferEphemeralSession,
-      ),
-      macos: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        preferEphemeralSession: preferEphemeralSession,
-      ),
-      windows: const OidcPlatformSpecificOptions_Native(),
-    );
-  }
+class AuthPage1 extends HookConsumerWidget {
+  const AuthPage1({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userNameController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
+    OidcPlatformSpecificOptions_Web_NavigationMode webNavigationMode =
+        OidcPlatformSpecificOptions_Web_NavigationMode.newPage;
+
+    bool allowInsecureConnections = false;
+    bool preferEphemeralSession = false;
+
+    OidcPlatformSpecificOptions getOptions() {
+      return OidcPlatformSpecificOptions(
+        web: OidcPlatformSpecificOptions_Web(
+          navigationMode: webNavigationMode,
+          popupHeight: 800,
+          popupWidth: 730,
+        ),
+        // these settings are from https://pub.dev/packages/flutter_appauth.
+        android: OidcPlatformSpecificOptions_AppAuth_Android(
+          allowInsecureConnections: allowInsecureConnections,
+        ),
+        ios: OidcPlatformSpecificOptions_AppAuth_IosMacos(
+          preferEphemeralSession: preferEphemeralSession,
+        ),
+        macos: OidcPlatformSpecificOptions_AppAuth_IosMacos(
+          preferEphemeralSession: preferEphemeralSession,
+        ),
+        windows: const OidcPlatformSpecificOptions_Native(),
+      );
+    }
+
     //remember, you can only enter this route if there is no user.
     final currentRoute = GoRouterState.of(context);
     final originalUri =
@@ -79,10 +76,11 @@ class _AuthPageState extends State<AuthPage> {
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 try {
-                  final result = await app_state.currentManager.loginPassword(
-                    username: userNameController.text,
-                    password: passwordController.text,
-                  );
+                  final result =
+                      await ref.read(oidcServiceProvider).manager.loginPassword(
+                            username: userNameController.text,
+                            password: passwordController.text,
+                          );
 
                   messenger.showSnackBar(
                     SnackBar(
@@ -124,9 +122,7 @@ class _AuthPageState extends State<AuthPage> {
                   if (value == null) {
                     return;
                   }
-                  setState(() {
-                    webNavigationMode = value;
-                  });
+                  webNavigationMode = value;
                 },
               ),
               const Divider(),
@@ -135,15 +131,17 @@ class _AuthPageState extends State<AuthPage> {
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 try {
-                  final result =
-                      await app_state.currentManager.loginAuthorizationCodeFlow(
-                    originalUri: parsedOriginalUri ?? Uri.parse('/'),
-                    //store any arbitrary data, here we store the authorization
-                    //start time.
-                    extraStateData: DateTime.now().toIso8601String(),
-                    options: _getOptions(),
-                    //NOTE: you can pass more parameters here.
-                  );
+                  final result = await ref
+                      .read(oidcServiceProvider)
+                      .manager
+                      .loginAuthorizationCodeFlow(
+                        originalUri: parsedOriginalUri ?? Uri.parse('/'),
+                        //store any arbitrary data, here we store the authorization
+                        //start time.
+                        extraStateData: DateTime.now().toIso8601String(),
+                        options: getOptions(),
+                        //NOTE: you can pass more parameters here.
+                      );
                   if (kIsWeb &&
                       webNavigationMode ==
                           OidcPlatformSpecificOptions_Web_NavigationMode
@@ -177,14 +175,18 @@ class _AuthPageState extends State<AuthPage> {
                 final messenger = ScaffoldMessenger.of(context);
 
                 // ignore: deprecated_member_use
-                final result = await app_state.currentManager.loginImplicitFlow(
-                  responseType: OidcConstants_AuthorizationEndpoint_ResponseType
-                      .idToken_Token,
-                  originalUri: parsedOriginalUri ?? Uri.parse('/'),
-                  //store any arbitrary data, here we store the authorization
-                  //start time.
-                  extraStateData: DateTime.now().toIso8601String(),
-                );
+                final result = await ref
+                    .read(oidcServiceProvider)
+                    .manager
+                    .loginImplicitFlow(
+                      responseType:
+                          OidcConstants_AuthorizationEndpoint_ResponseType
+                              .idToken_Token,
+                      originalUri: parsedOriginalUri ?? Uri.parse('/'),
+                      //store any arbitrary data, here we store the authorization
+                      //start time.
+                      extraStateData: DateTime.now().toIso8601String(),
+                    );
                 if (kIsWeb &&
                     webNavigationMode ==
                         OidcPlatformSpecificOptions_Web_NavigationMode

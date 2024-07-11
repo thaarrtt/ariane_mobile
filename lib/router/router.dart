@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:ariane_mobile/auth/service/oidc_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ariane_mobile/auth/handler/auth_handler.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:oidc/oidc.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'routes.dart';
@@ -10,56 +14,55 @@ part 'router.g.dart';
 @riverpod
 GoRouter router(RouterRef ref) {
   final routerKey = GlobalKey<NavigatorState>(debugLabel: 'routerKey');
-  final isAuth = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
-  ref
-    ..onDispose(isAuth.dispose) // don't forget to clean after yourselves (:
-    // update the listenable, when some provider value changes
-    // here, we are just interested in wheter the user's logged in
-    ..listen(
-      authHandlerProvider
-          .select((value) => value.whenData((value) => value.isAuth)),
-      (_, next) {
-        isAuth.value = next;
-      },
-    );
+  final oidcService = ref.watch(oidcServiceProvider);
+  oidcService.init();
 
   final router = GoRouter(
     navigatorKey: routerKey,
-    refreshListenable: isAuth,
+    refreshListenable: GoRouterRefreshStream(oidcService.userChanges),
     initialLocation: const SplashRoute().location,
     debugLogDiagnostics: true,
     routes: $appRoutes,
-    redirect: (context, state) {
-      if (isAuth.value.unwrapPrevious().hasError) {
-        return const LoginRoute().location;
-      }
+    redirect: (context, state) async {
+      final container = ProviderScope.containerOf(context);
+      final userAsync = container.read(currentUserProvider);
 
-      if (isAuth.value.isLoading || !isAuth.value.hasValue) {
+      if (userAsync.isLoading) {
         return const SplashRoute().location;
       }
 
-      final auth = isAuth.value.requireValue;
-
-      if (state.uri.path.contains(const RegistRoute().location)) {
-        return null;
+      if (userAsync.hasError || userAsync.value == null) {
+        return const LoginRoute().location;
       }
 
-      if (state.uri.path.contains(const ChatDetailRoute().location)) {
-        return null;
+      final originalUri =
+          state.uri.queryParameters[OidcConstants_Store.originalUri];
+      if (originalUri != null) {
+        return originalUri;
       }
 
-      final isSplash = state.uri.path == const SplashRoute().location;
-      if (isSplash) {
-        return auth ? const HomeRoute().location : const LoginRoute().location;
-      }
-
-      final isLoggingIn = state.uri.path == const LoginRoute().location;
-      if (isLoggingIn) return auth ? const HomeRoute().location : null;
-
-      return auth ? null : const SplashRoute().location;
+      return null;
     },
   );
+
   ref.onDispose(router.dispose); // always clean up after yourselves (:
 
   return router;
+}
+
+class GoRouterRefreshStream extends ChangeNotifier {
+  GoRouterRefreshStream(Stream<OidcUser?> stream) {
+    notifyListeners();
+    _subscription = stream.asBroadcastStream().listen(
+          (OidcUser? user) => notifyListeners(),
+        );
+  }
+
+  late final StreamSubscription<OidcUser?> _subscription;
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ariane_mobile/auth/service/oidc_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:ariane_mobile/auth/model/auth.dart';
@@ -47,6 +48,7 @@ class AuthHandler extends _$AuthHandler {
   /// Mock of a request performed on logout (might be common, or not, whatevs).
   Future<void> logout() async {
     await Future<void>.delayed(networkRoundTripTime);
+    ref.read(oidcServiceProvider).manager.logout();
     state = const AsyncData(Auth.signedOut());
   }
 

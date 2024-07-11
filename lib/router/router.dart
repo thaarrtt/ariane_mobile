@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ariane_mobile/auth/service/oidc_service.dart';
+import 'package:ariane_mobile/auth/service/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,6 +17,7 @@ GoRouter router(RouterRef ref) {
   final routerKey = GlobalKey<NavigatorState>(debugLabel: 'routerKey');
   final oidcService = ref.watch(oidcServiceProvider);
   oidcService.init();
+  ref.read(userServiceProvider).init();
 
   final router = GoRouter(
     navigatorKey: routerKey,
@@ -32,7 +34,7 @@ GoRouter router(RouterRef ref) {
       }
 
       if (userAsync.hasError || userAsync.value == null) {
-        return const LoginRoute().location;
+        return const WelcomeRoute().location;
       }
 
       final originalUri =

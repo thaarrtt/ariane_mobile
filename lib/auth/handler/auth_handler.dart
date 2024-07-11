@@ -20,9 +20,6 @@ const _dummyUser = Auth.signedIn(
 class AuthHandler extends _$AuthHandler {
   @override
   Future<Auth> build() async {
-    await ref.read(userServiceProvider).init();
-    await ref.read(oidcServiceProvider).init();
-
     _listenToOidcUserChanges();
 
     _persistenceRefreshLogic();

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:ariane_mobile/auth/service/oidc_service.dart';
-import 'package:ariane_mobile/auth/view/login_page.dart';
+import 'package:ariane_mobile/auth/view/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ariane_mobile/common/pages/admin_page.dart';
@@ -41,7 +41,7 @@ class HomeRoute extends GoRouteData {
 
     // If there's an authentication error or user is not authenticated, redirect to login
     if (userAsync.hasError || userAsync.value == null) {
-      return const LoginRoute().location;
+      return const WelcomeRoute().location;
     }
 
     // User is authenticated, allow access to home page
@@ -72,7 +72,7 @@ class SplashRoute extends GoRouteData {
 
     if (userAsync.hasError) {
       logInfo('Error in authentication, redirecting to login');
-      return const LoginRoute().location;
+      return const WelcomeRoute().location;
     }
 
     final user = userAsync.value;
@@ -89,7 +89,7 @@ class SplashRoute extends GoRouteData {
       return const HomeRoute().location;
     } else {
       logInfo('User not authenticated, redirecting to login');
-      return const LoginRoute().location;
+      return const WelcomeRoute().location;
     }
   }
 
@@ -99,13 +99,13 @@ class SplashRoute extends GoRouteData {
   }
 }
 
-@TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
-  const LoginRoute();
+@TypedGoRoute<WelcomeRoute>(path: '/welcome')
+class WelcomeRoute extends GoRouteData {
+  const WelcomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const LoginPage();
+    return const WelcomePage();
   }
 }
 

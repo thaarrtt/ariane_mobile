@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:ariane_mobile/auth/service/oidc_service.dart';
-import 'package:ariane_mobile/common/pages/auth.dart';
+import 'package:ariane_mobile/auth/view/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ariane_mobile/common/pages/admin_page.dart';
@@ -105,7 +105,7 @@ class LoginRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const AuthPage1();
+    return const LoginPage();
   }
 }
 

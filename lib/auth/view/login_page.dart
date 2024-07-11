@@ -9,22 +9,23 @@ import 'package:ariane_mobile/common/widgets/action_button_styled.dart';
 import 'package:ariane_mobile/home/view/boarding_dialog.dart';
 import 'package:loggy/loggy.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:oidc/oidc.dart';
 
 class LoginPage extends StatefulHookConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPage2State();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
 }
 
-class _LoginPage2State extends ConsumerState<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   @override
   void didChangeDependencies() {
     // showOnBoardingPageIfNeeded();
     super.didChangeDependencies();
   }
 
-  showOnBoardingPageIfNeeded() {
+  void showOnBoardingPageIfNeeded() {
     bool board = ref.read(userServiceProvider).isBoard();
 
     logInfo('boarding is $board');
@@ -41,13 +42,31 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final uname = useTextEditingController();
     final passwd = useTextEditingController();
-
     final obscurePasswd = useState(true);
 
-    Future<void> login() => ref.read(authHandlerProvider.notifier).login(
-          'myEmail',
-          'myPassword',
+    Future<void> login() async {
+      final messenger = ScaffoldMessenger.of(context);
+      try {
+        await ref.read(authHandlerProvider.notifier).login(
+              uname.text,
+              passwd.text,
+            );
+
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Login successful'),
+          ),
         );
+      } catch (e) {
+        logError(e.toString());
+        messenger.showSnackBar(
+          SnackBar(
+            content:
+                Text('Login failed! ${e is OidcException ? e.message : ""}'),
+          ),
+        );
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -96,7 +115,7 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
                         controller: uname,
                         decoration: InputDecoration(
                           labelStyle: AppStyle.smallTextGrey,
-                          labelText: 'email',
+                          labelText: 'Email',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -114,7 +133,7 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
                         obscureText: obscurePasswd.value,
                         decoration: InputDecoration(
                           labelStyle: AppStyle.smallTextGrey,
-                          labelText: 'passwd',
+                          labelText: 'Password',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide.none,
@@ -129,7 +148,6 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
                             ),
                             onPressed: () {
                               final curr = obscurePasswd.value;
-
                               obscurePasswd.value = !curr;
                             },
                           ),
@@ -144,7 +162,7 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
                         child: TextButton(
                           onPressed: () {},
                           child: const Text(
-                            'Lupa passwd?',
+                            'Forgot password?',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.blueAccent,
@@ -172,14 +190,14 @@ class _LoginPage2State extends ConsumerState<LoginPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'belum punya akun?',
+                            "Don't have an account?",
                             style: AppStyle.textSubTitleGrey,
                           ),
                           SizedBox(width: 0.01.sw),
                           InkWell(
                             onTap: () {},
                             child: Text(
-                              'Daftar sekarang',
+                              'Sign up now',
                               style: AppStyle.textSubTitleBOLD,
                             ),
                           ),

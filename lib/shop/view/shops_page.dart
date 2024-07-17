@@ -7,13 +7,10 @@ class ShopsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
+    print('Building ShopsPage');
+    return const Column(
       children: [
-        ShopsScreen(
-          gemsBalance: 0,
-          onProfileTap: () {},
-          onTopUpTap: () {},
-        ),
+        ShopsScreen(),
       ],
     );
   }

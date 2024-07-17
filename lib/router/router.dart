@@ -14,52 +14,62 @@ part 'router.g.dart';
 
 @riverpod
 GoRouter router(RouterRef ref) {
+  print('Initializing router');
   final routerKey = GlobalKey<NavigatorState>(debugLabel: 'routerKey');
   final oidcService = ref.watch(oidcServiceProvider);
   oidcService.init();
   ref.read(userServiceProvider).init();
 
-  final router = GoRouter(
+  return GoRouter(
     navigatorKey: routerKey,
     refreshListenable: GoRouterRefreshStream(oidcService.userChanges),
     initialLocation: const SplashRoute().location,
     debugLogDiagnostics: true,
     routes: $appRoutes,
-    redirect: (context, state) async {
-      final container = ProviderScope.containerOf(context);
-      final userAsync = container.read(currentUserProvider);
+    redirect: (context, state) {
+      final userAsync = ref.read(currentUserProvider);
 
-      // Don't redirect if we're on the splash screen
+      print('Redirect called for path: ${state.uri.path}');
+      print('User state: $userAsync');
+
+      // Always allow access to splash
       if (state.uri.path == '/splash') {
+        print('On splash page, no redirect');
         return null;
       }
 
       if (userAsync.isLoading) {
-        return const SplashRoute().location;
+        print('User state is loading');
+        // Instead of redirecting, we'll stay on the current page
+        return null;
       }
 
-      if (userAsync.hasError || userAsync.value == null) {
-        // Don't redirect if we're already on the welcome page
-        if (state.uri.path == '/welcome') {
+      final user = userAsync.value;
+
+      if (user == null) {
+        print('User is not authenticated');
+        if (state.uri.path == '/welcome' || state.uri.path == '/regist') {
+          print('On welcome or regist page, no redirect');
           return null;
         }
+        print('Redirecting to welcome page');
         return const WelcomeRoute().location;
+      } else {
+        print('User is authenticated');
+        if (state.uri.path == '/welcome' || state.uri.path == '/regist') {
+          print('On welcome or regist page, redirecting to home');
+          return const HomeRoute().location;
+        }
+        print('Allowing access to: ${state.uri.path}');
+        return null;
       }
-
-      // User is authenticated
-      if (state.uri.path == '/welcome' || state.uri.path == '/splash') {
-        // Redirect to home if on welcome or splash page
-        return const HomeRoute().location;
-      }
-
-      // Allow access to all other routes when authenticated
-      return null;
     },
   );
+}
 
-  ref.onDispose(router.dispose);
-
-  return router;
+bool isProtectedRoute(String path) {
+  final protectedPaths = ['/', '/chat_detail', '/shops'];
+  return protectedPaths.any((protectedPath) => path.startsWith(protectedPath));
 }
 
 class GoRouterRefreshStream extends ChangeNotifier {

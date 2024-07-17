@@ -4,27 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ShopsScreen extends StatelessWidget {
-  final int gemsBalance;
-  final VoidCallback onProfileTap;
-  final VoidCallback onTopUpTap;
-
-  const ShopsScreen({
-    super.key,
-    required this.gemsBalance,
-    required this.onProfileTap,
-    required this.onTopUpTap,
-  });
+  const ShopsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          DashBoardScreenHeader(
-            gemsBalance: gemsBalance,
-            onProfileTap: onProfileTap,
-            onTopUpTap: onTopUpTap,
-          ),
           Expanded(
             child: ListView(
               padding: EdgeInsets.all(16.w),

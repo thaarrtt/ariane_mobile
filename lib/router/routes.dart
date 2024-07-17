@@ -20,46 +20,12 @@ class SplashRoute extends GoRouteData {
   const SplashRoute();
 
   @override
-  FutureOr<String?> redirect(BuildContext context, GoRouterState state) async {
-    final container = ProviderScope.containerOf(context);
-    final userAsync = container.read(currentUserProvider);
-
-    logInfo('User state: ${userAsync.toString()}');
-
-    if (userAsync.isLoading) {
-      logInfo('Still loading, staying on splash');
-      return null;
-    }
-
-    if (userAsync.hasError) {
-      logInfo('Error in authentication, redirecting to login');
-      return const WelcomeRoute().location;
-    }
-
-    final user = userAsync.value;
-
-    if (user != null) {
-      logInfo('User authenticated');
-      final originalUri =
-          state.uri.queryParameters[OidcConstants_Store.originalUri];
-      if (originalUri != null) {
-        logInfo('Redirecting to original URI: $originalUri');
-        return originalUri;
-      }
-      logInfo('Redirecting to home');
-      return const HomeRoute().location;
-    } else {
-      logInfo('User not authenticated, redirecting to login');
-      return const WelcomeRoute().location;
-    }
-  }
-
-  @override
   Widget build(BuildContext context, GoRouterState state) {
     return const SplashPage();
   }
 }
 
+// PROTECTED (ONLY AUTHENTICATED USER CAN ACCESS)
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: [

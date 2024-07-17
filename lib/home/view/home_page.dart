@@ -6,7 +6,7 @@ import 'package:ariane_mobile/auth/view/account_screen.dart';
 import 'package:ariane_mobile/common/utils/app_style.dart';
 import 'package:ariane_mobile/home/view/chat_screen.dart';
 import 'package:ariane_mobile/home/view/faq_screen.dart';
-import 'package:ariane_mobile/home/view/dashboar_screen.dart';
+import 'package:ariane_mobile/home/view/dashboard_screen.dart';
 import 'package:ariane_mobile/home/view/side_drawer_home.dart';
 
 class Index extends StateNotifier<int> {

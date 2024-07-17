@@ -13,7 +13,15 @@ class DashboardScreen extends ConsumerWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const DashBoardScreenHeader(),
+          DashBoardScreenHeader(
+            gemsBalance: 0,
+            onProfileTap: () {
+              // Handle profile tap
+            },
+            onTopUpTap: () {
+              // Handle top-up tap
+            },
+          ),
           SizedBox(height: 0.02.sh),
           SizedBox(
             height: 0.5.sh,

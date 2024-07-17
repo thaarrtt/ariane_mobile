@@ -34,6 +34,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
           path: 'chat_detail',
           factory: $ChatDetailRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'shops',
+          factory: $ShopsRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -111,6 +115,23 @@ extension $ChatDetailRouteExtension on ChatDetailRoute {
 
   String get location => GoRouteData.$location(
         '/chat_detail',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $ShopsRouteExtension on ShopsRoute {
+  static ShopsRoute _fromState(GoRouterState state) => const ShopsRoute();
+
+  String get location => GoRouteData.$location(
+        '/shops',
       );
 
   void go(BuildContext context) => context.go(location);

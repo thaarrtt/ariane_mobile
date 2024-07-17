@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ariane_mobile/auth/service/oidc_service.dart';
 import 'package:ariane_mobile/auth/view/welcome_page.dart';
+import 'package:ariane_mobile/shop/view/shops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ariane_mobile/common/pages/admin_page.dart';
@@ -24,6 +25,7 @@ part 'routes.g.dart';
     TypedGoRoute<UserRoute>(path: 'user'),
     TypedGoRoute<GuestRoute>(path: 'guest'),
     TypedGoRoute<ChatDetailRoute>(path: 'chat_detail'),
+    TypedGoRoute<ShopsRoute>(path: 'shops'),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -143,6 +145,15 @@ class ChatDetailRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return ChatPage();
+  }
+}
+
+class ShopsRoute extends GoRouteData {
+  const ShopsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const ShopsPage();
   }
 }
 

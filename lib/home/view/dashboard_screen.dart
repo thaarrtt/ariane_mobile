@@ -1,3 +1,4 @@
+import 'package:ariane_mobile/router/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,12 +15,12 @@ class DashboardScreen extends ConsumerWidget {
       child: Column(
         children: [
           DashBoardScreenHeader(
-            gemsBalance: 0,
+            gemsBalance: 100000,
             onProfileTap: () {
               // Handle profile tap
             },
             onTopUpTap: () {
-              // Handle top-up tap
+              const ShopsRoute().push(context);
             },
           ),
           SizedBox(height: 0.02.sh),

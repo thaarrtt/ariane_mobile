@@ -16,14 +16,14 @@ class Index extends StateNotifier<int> {
 
 final indexHomeProvider = StateNotifierProvider((ref) => Index());
 
-class HomePage1 extends ConsumerStatefulWidget {
-  const HomePage1({super.key});
+class HomePage extends ConsumerStatefulWidget {
+  const HomePage({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _HomePage1State();
 }
 
-class _HomePage1State extends ConsumerState<HomePage1> {
+class _HomePage1State extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();

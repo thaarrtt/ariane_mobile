@@ -50,7 +50,7 @@ class HomeRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomePage1();
+    return const HomePage();
   }
 }
 
@@ -133,7 +133,7 @@ class UserRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const HomePage1();
+    return const HomePage();
   }
 }
 

@@ -13,7 +13,7 @@ class WelcomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     OidcPlatformSpecificOptions_Web_NavigationMode webNavigationMode =
-        OidcPlatformSpecificOptions_Web_NavigationMode.newPage;
+        OidcPlatformSpecificOptions_Web_NavigationMode.popup;
 
     bool allowInsecureConnections = false;
     bool preferEphemeralSession = false;

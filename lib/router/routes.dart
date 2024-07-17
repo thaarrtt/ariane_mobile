@@ -5,9 +5,6 @@ import 'package:ariane_mobile/auth/view/welcome_page.dart';
 import 'package:ariane_mobile/shop/view/shops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ariane_mobile/common/pages/admin_page.dart';
-import 'package:ariane_mobile/common/pages/details_page.dart';
-import 'package:ariane_mobile/common/pages/guest_page.dart';
 import 'package:ariane_mobile/common/pages/regist_page.dart';
 import 'package:ariane_mobile/common/pages/splash_page.dart';
 import 'package:ariane_mobile/home/view/chat_detail.dart';
@@ -21,9 +18,6 @@ part 'routes.g.dart';
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: [
-    TypedGoRoute<AdminRoute>(path: 'admin'),
-    TypedGoRoute<UserRoute>(path: 'user'),
-    TypedGoRoute<GuestRoute>(path: 'guest'),
     TypedGoRoute<ChatDetailRoute>(path: 'chat_detail'),
     TypedGoRoute<ShopsRoute>(path: 'shops'),
   ],
@@ -121,24 +115,6 @@ class RegistRoute extends GoRouteData {
   }
 }
 
-class AdminRoute extends GoRouteData {
-  const AdminRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const AdminPage();
-  }
-}
-
-class UserRoute extends GoRouteData {
-  const UserRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const HomePage();
-  }
-}
-
 class ChatDetailRoute extends GoRouteData {
   const ChatDetailRoute();
 
@@ -157,15 +133,6 @@ class ShopsRoute extends GoRouteData {
   }
 }
 
-class GuestRoute extends GoRouteData {
-  const GuestRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const GuestPage();
-  }
-}
-
 /// This route shows how to parametrize a simple page and how to pass a simple query parameter.
 @TypedGoRoute<DetailsRoute>(path: '/details/:id')
 class DetailsRoute extends GoRouteData {
@@ -175,9 +142,6 @@ class DetailsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return DetailsPage(
-      id,
-      isNuclearCode: isNuke,
-    );
+    return Container();
   }
 }

@@ -19,18 +19,6 @@ RouteBase get $homeRoute => GoRouteData.$route(
       factory: $HomeRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'admin',
-          factory: $AdminRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
-          path: 'user',
-          factory: $UserRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
-          path: 'guest',
-          factory: $GuestRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
           path: 'chat_detail',
           factory: $ChatDetailRouteExtension._fromState,
         ),
@@ -46,57 +34,6 @@ extension $HomeRouteExtension on HomeRoute {
 
   String get location => GoRouteData.$location(
         '/',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $AdminRouteExtension on AdminRoute {
-  static AdminRoute _fromState(GoRouterState state) => const AdminRoute();
-
-  String get location => GoRouteData.$location(
-        '/admin',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $UserRouteExtension on UserRoute {
-  static UserRoute _fromState(GoRouterState state) => const UserRoute();
-
-  String get location => GoRouteData.$location(
-        '/user',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $GuestRouteExtension on GuestRoute {
-  static GuestRoute _fromState(GoRouterState state) => const GuestRoute();
-
-  String get location => GoRouteData.$location(
-        '/guest',
       );
 
   void go(BuildContext context) => context.go(location);

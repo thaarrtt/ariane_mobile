@@ -29,25 +29,35 @@ GoRouter router(RouterRef ref) {
       final container = ProviderScope.containerOf(context);
       final userAsync = container.read(currentUserProvider);
 
+      // Don't redirect if we're on the splash screen
+      if (state.uri.path == '/splash') {
+        return null;
+      }
+
       if (userAsync.isLoading) {
         return const SplashRoute().location;
       }
 
       if (userAsync.hasError || userAsync.value == null) {
+        // Don't redirect if we're already on the welcome page
+        if (state.uri.path == '/welcome') {
+          return null;
+        }
         return const WelcomeRoute().location;
       }
 
-      final originalUri =
-          state.uri.queryParameters[OidcConstants_Store.originalUri];
-      if (originalUri != null) {
-        return originalUri;
+      // User is authenticated
+      if (state.uri.path == '/welcome' || state.uri.path == '/splash') {
+        // Redirect to home if on welcome or splash page
+        return const HomeRoute().location;
       }
 
+      // Allow access to all other routes when authenticated
       return null;
     },
   );
 
-  ref.onDispose(router.dispose); // always clean up after yourselves (:
+  ref.onDispose(router.dispose);
 
   return router;
 }

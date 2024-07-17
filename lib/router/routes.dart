@@ -15,41 +15,6 @@ import 'package:oidc/oidc.dart';
 
 part 'routes.g.dart';
 
-@TypedGoRoute<HomeRoute>(
-  path: '/',
-  routes: [
-    TypedGoRoute<ChatDetailRoute>(path: 'chat_detail'),
-    TypedGoRoute<ShopsRoute>(path: 'shops'),
-  ],
-)
-class HomeRoute extends GoRouteData {
-  const HomeRoute();
-
-  @override
-  FutureOr<String?> redirect(BuildContext context, GoRouterState state) async {
-    final container = ProviderScope.containerOf(context);
-    final userAsync = container.read(currentUserProvider);
-
-    // If authentication state is loading, show splash screen
-    if (userAsync.isLoading) {
-      return const SplashRoute().location;
-    }
-
-    // If there's an authentication error or user is not authenticated, redirect to login
-    if (userAsync.hasError || userAsync.value == null) {
-      return const WelcomeRoute().location;
-    }
-
-    // User is authenticated, allow access to home page
-    return null;
-  }
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const HomePage();
-  }
-}
-
 @TypedGoRoute<SplashRoute>(path: '/splash')
 class SplashRoute extends GoRouteData {
   const SplashRoute();
@@ -57,13 +22,13 @@ class SplashRoute extends GoRouteData {
   @override
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) async {
     final container = ProviderScope.containerOf(context);
-
     final userAsync = container.read(currentUserProvider);
 
     logInfo('User state: ${userAsync.toString()}');
 
     if (userAsync.isLoading) {
       logInfo('Still loading, staying on splash');
+      return null;
     }
 
     if (userAsync.hasError) {
@@ -92,6 +57,22 @@ class SplashRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const SplashPage();
+  }
+}
+
+@TypedGoRoute<HomeRoute>(
+  path: '/',
+  routes: [
+    TypedGoRoute<ChatDetailRoute>(path: 'chat_detail'),
+    TypedGoRoute<ShopsRoute>(path: 'shops'),
+  ],
+)
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const HomePage();
   }
 }
 

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:ariane_mobile/home/view/home_screen_header.dart';
+import 'package:ariane_mobile/home/view/dash_screen_header.dart';
 import 'package:ariane_mobile/home/widgets/fan_carousel.dart';
 import 'package:ariane_mobile/home/widgets/home_icon_btn.dart';
 
-class HomeScreen1 extends ConsumerWidget {
-  const HomeScreen1({super.key});
+class DashboardScreen extends ConsumerWidget {
+  const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const HomeScreenHeader(),
+          const DashBoardScreenHeader(),
           SizedBox(height: 0.02.sh),
           SizedBox(
             height: 0.5.sh,

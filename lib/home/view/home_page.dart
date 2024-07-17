@@ -6,7 +6,7 @@ import 'package:ariane_mobile/auth/view/account_screen.dart';
 import 'package:ariane_mobile/common/utils/app_style.dart';
 import 'package:ariane_mobile/home/view/chat_screen.dart';
 import 'package:ariane_mobile/home/view/faq_screen.dart';
-import 'package:ariane_mobile/home/view/home_screen_1.dart';
+import 'package:ariane_mobile/home/view/dashboar_screen.dart';
 import 'package:ariane_mobile/home/view/side_drawer_home.dart';
 
 class Index extends StateNotifier<int> {
@@ -69,7 +69,7 @@ class _HomePage1State extends ConsumerState<HomePage> {
               allowImplicitScrolling: true,
               controller: controller,
               children: const [
-                HomeScreen1(),
+                DashboardScreen(),
                 TicketListPage(),
                 FAQScreen(),
                 AccountScreen(),

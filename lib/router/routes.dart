@@ -1,17 +1,12 @@
 import 'dart:async';
 
-import 'package:ariane_mobile/auth/service/oidc_service.dart';
 import 'package:ariane_mobile/auth/view/welcome_page.dart';
 import 'package:ariane_mobile/shop/view/shops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ariane_mobile/common/pages/regist_page.dart';
 import 'package:ariane_mobile/common/pages/splash_page.dart';
 import 'package:ariane_mobile/home/view/chat_detail.dart';
 import 'package:ariane_mobile/home/view/home_page.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:loggy/loggy.dart';
-import 'package:oidc/oidc.dart';
 
 part 'routes.g.dart';
 
@@ -49,16 +44,6 @@ class WelcomeRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const WelcomePage();
-  }
-}
-
-@TypedGoRoute<RegistRoute>(path: '/regist')
-class RegistRoute extends GoRouteData {
-  const RegistRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const RegistPage();
   }
 }
 

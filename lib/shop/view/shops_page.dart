@@ -8,10 +8,8 @@ class ShopsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     print('Building ShopsPage');
-    return const Column(
-      children: [
-        ShopsScreen(),
-      ],
+    return const Scaffold(
+      body: ShopsScreen(),
     );
   }
 }

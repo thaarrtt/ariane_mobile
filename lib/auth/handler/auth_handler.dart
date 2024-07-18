@@ -8,90 +8,86 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_handler.g.dart';
 
-/// A mock of an Authenticated User
-const _dummyUser = Auth.signedIn(
-  id: 'asdasdas',
-  displayName: 'My Name',
-  email: 'My Email',
-  token: 'some-updated-secret-auth-token',
-);
-
 @riverpod
 class AuthHandler extends _$AuthHandler {
   @override
   Future<Auth> build() async {
-    _listenToOidcUserChanges();
+    // Initialize the OIDC service
+    await ref.read(oidcServiceProvider).init();
+    await ref.read(userServiceProvider).init();
 
+    // Set up persistence refresh logic
     _persistenceRefreshLogic();
 
+    // Attempt to recover login state
     return _loginRecoveryAttempt();
-  }
-
-  void _listenToOidcUserChanges() {
-    ref.read(oidcServiceProvider).userChanges.listen((oidcUser) {
-      if (oidcUser != null) {
-        state = AsyncData(Auth.signedIn(
-          id: oidcUser.uid ?? 'no uid',
-          displayName: 'display name',
-          email: 'display email',
-          token: oidcUser.idToken,
-        ));
-      } else {
-        state = const AsyncData(Auth.signedOut());
-      }
-    });
   }
 
   Future<Auth> _loginRecoveryAttempt() async {
     try {
-      final savedToken = ref.read(userServiceProvider).fetch();
-      if (savedToken == null) {
-        throw const UnauthorizedException('No auth token found');
-      }
-
       final oidcService = ref.read(oidcServiceProvider);
       final user = oidcService.manager.currentUser;
-      if (user == null) {
-        throw const UnauthorizedException('No OIDC user found');
-      }
 
-      return Auth.signedIn(
-        id: user.uid ?? 'no uids',
-        displayName: 'display name',
-        email: 'display email',
-        token: user.idToken,
-      );
-    } catch (_, __) {
+      if (user != null) {
+        return Auth.signedIn(
+          id: user.uid ?? 'no uid',
+          displayName: user.attributes.toString(),
+          email: user.userInfo.toString(),
+          token: user.idToken,
+        );
+      } else {
+        return const Auth.signedOut();
+      }
+    } catch (e) {
       ref.read(userServiceProvider).del().ignore();
       return const Auth.signedOut();
     }
   }
 
   Future<void> logout() async {
-    await Future<void>.delayed(networkRoundTripTime);
     await ref.read(oidcServiceProvider).logout();
     state = const AsyncData(Auth.signedOut());
   }
 
   Future<void> login(String email, String password) async {
-    final oidcService = ref.read(oidcServiceProvider);
-    final user = await oidcService.manager
-        .loginPassword(username: email, password: password);
-    state = AsyncData(Auth.signedIn(
-      id: user?.uid ?? 'no uids',
-      displayName: 'display name',
-      email: 'display email',
-      token: user?.idToken ?? 'no token',
-    ));
+    state = const AsyncLoading();
+    try {
+      final oidcService = ref.read(oidcServiceProvider);
+      final user = await oidcService.manager
+          .loginPassword(username: email, password: password);
+      if (user != null) {
+        state = AsyncData(Auth.signedIn(
+          id: user.uid ?? 'no uid',
+          displayName: user.attributes.toString(),
+          email: user.userInfo.toString(),
+          token: user.idToken,
+        ));
+      } else {
+        state = const AsyncError('Login failed', StackTrace.empty);
+      }
+    } catch (e, stack) {
+      state = AsyncError('Login error: $e', stack);
+    }
   }
 
-  Future<void> regist(String email, String password) async {
-    // Registration logic
-    final result = await Future.delayed(
-      networkRoundTripTime,
-      () => _dummyUser,
-    );
-    state = AsyncData(result);
+  Future<void> refreshAuth() async {
+    state = const AsyncLoading();
+    try {
+      final oidcService = ref.read(oidcServiceProvider);
+      final user = oidcService.manager.currentUser;
+      if (user != null) {
+        state = AsyncData(Auth.signedIn(
+          id: user.uid ?? 'no uid',
+          displayName: user.attributes.toString(),
+          email: user.userInfo.toString(),
+          token: user.idToken,
+        ));
+      } else {
+        state = const AsyncData(Auth.signedOut());
+      }
+    } catch (e, stack) {
+      state = AsyncError('Refresh error: $e', stack);
+    }
   }
 
   void _persistenceRefreshLogic() {

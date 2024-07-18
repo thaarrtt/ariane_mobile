@@ -22,7 +22,6 @@ class OnBoardingScreen extends ConsumerWidget {
       onFinish: () {
         ref.read(userServiceProvider).disableBoard().ignore();
         Navigator.pop(context);
-        const RegistRoute().go(context);
       },
       finishButtonStyle: const FinishButtonStyle(
         backgroundColor: AppStyle.brandBlueColor,

@@ -10,7 +10,6 @@ List<RouteBase> get $appRoutes => [
       $splashRoute,
       $homeRoute,
       $welcomeRoute,
-      $registRoute,
       $detailsRoute,
     ];
 
@@ -113,28 +112,6 @@ extension $WelcomeRouteExtension on WelcomeRoute {
 
   String get location => GoRouteData.$location(
         '/welcome',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $registRoute => GoRouteData.$route(
-      path: '/regist',
-      factory: $RegistRouteExtension._fromState,
-    );
-
-extension $RegistRouteExtension on RegistRoute {
-  static RegistRoute _fromState(GoRouterState state) => const RegistRoute();
-
-  String get location => GoRouteData.$location(
-        '/regist',
       );
 
   void go(BuildContext context) => context.go(location);

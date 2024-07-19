@@ -56,9 +56,9 @@ class ShopItemCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-            child: Image.asset(
+            child: SvgPicture.asset(
               item.imageUrl,
-              height: 120.h,
+              height: 100.h,
               width: double.infinity,
               fit: BoxFit.cover,
             ),
@@ -123,23 +123,19 @@ class ShopItem {
   ShopItem({required this.name, required this.price, required this.imageUrl});
 }
 
-// Sample shop items
+// Sample shop items with SVG images
 final List<ShopItem> shopItems = [
   ShopItem(
-      name: 'Gold Sword', price: 100, imageUrl: 'assets/images/gold_sword.png'),
+      name: 'Gold Sword', price: 100, imageUrl: 'assets/icons/gold_sword.svg'),
   ShopItem(
-      name: 'Magic Potion',
-      price: 50,
-      imageUrl: 'assets/images/magic_potion.png'),
-  ShopItem(
-      name: 'Dragon Egg', price: 500, imageUrl: 'assets/images/dragon_egg.png'),
+      name: 'Dragon Egg', price: 500, imageUrl: 'assets/icons/dragon_egg.svg'),
   ShopItem(
       name: 'Enchanted Armor',
       price: 200,
-      imageUrl: 'assets/images/enchanted_armor.png'),
+      imageUrl: 'assets/icons/enchanted_armor.svg'),
   ShopItem(
       name: 'Phoenix Feather',
       price: 150,
-      imageUrl: 'assets/images/phoenix_feather.png'),
-  ShopItem(name: 'Eye Mask', price: 75, imageUrl: 'assets/images/eye_mask.png'),
+      imageUrl: 'assets/icons/phoenix_feather.svg'),
+  ShopItem(name: 'Eye Mask', price: 75, imageUrl: 'assets/icons/eye_mask.svg'),
 ];

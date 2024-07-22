@@ -8,32 +8,33 @@ class ShopsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        padding: EdgeInsets.all(16.w),
-        children: [
-          Text(
-            'Shops',
-            style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-            ),
+      appBar: AppBar(
+        title: Text(
+          'Shops',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
           ),
-          SizedBox(height: 16.h),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w),
+          child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 16.w,
-              mainAxisSpacing: 16.h,
-              childAspectRatio: 0.75,
+              crossAxisSpacing: 12.w,
+              mainAxisSpacing: 12.h,
+              childAspectRatio: 0.8,
             ),
             itemCount: shopItems.length,
             itemBuilder: (context, index) {
               return ShopItemCard(item: shopItems[index]);
             },
           ),
-        ],
+        ),
       ),
     );
   }
@@ -54,57 +55,68 @@ class ShopItemCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-            child: SvgPicture.asset(
-              item.imageUrl,
-              height: 100.h,
-              width: double.infinity,
-              fit: BoxFit.cover,
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  item.imageUrl,
+                  height: 60.h,
+                  width: 60.w,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
           Padding(
             padding: EdgeInsets.all(8.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   item.name,
                   style: TextStyle(
-                    fontSize: 16.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.bold,
                   ),
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.h),
                 Row(
                   children: [
                     SvgPicture.asset(
                       'assets/icons/diamond.svg',
-                      width: 16.w,
-                      height: 16.h,
+                      width: 12.w,
+                      height: 12.h,
                     ),
-                    SizedBox(width: 4.w),
+                    SizedBox(width: 2.w),
                     Text(
                       '${item.price}',
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 12.sp,
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: 4.h),
                 ElevatedButton(
                   onPressed: () {
                     // Handle purchase
                   },
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 36.h),
+                    minimumSize: Size(double.infinity, 24.h),
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
                   ),
-                  child: const Text('Buy'),
+                  child: Text('Buy', style: TextStyle(fontSize: 10.sp)),
                 ),
               ],
             ),
@@ -115,6 +127,9 @@ class ShopItemCard extends StatelessWidget {
   }
 }
 
+// The ShopItem class and shopItems list remain the same
+
+// The ShopItem class and shopItems list remain the same
 class ShopItem {
   final String name;
   final int price;

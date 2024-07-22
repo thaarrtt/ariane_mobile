@@ -20,7 +20,7 @@ class DashboardScreen extends ConsumerWidget {
               // Handle profile tap
             },
             onTopUpTap: () {
-              const ShopsRoute().push(context);
+              const PaymentRoute().push(context);
             },
           ),
           SizedBox(height: 0.02.sh),

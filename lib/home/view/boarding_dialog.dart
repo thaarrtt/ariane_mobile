@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:ariane_mobile/auth/service/user_service.dart';
 import 'package:ariane_mobile/common/utils/app_style.dart';
-import 'package:ariane_mobile/router/routes.dart';
 
 class OnBoardingScreen extends ConsumerWidget {
   const OnBoardingScreen({super.key});

@@ -20,7 +20,6 @@ class DashboardScreen extends ConsumerWidget {
               // Handle profile tap
             },
             onTopUpTap: () {
-              print('Navigating to shops page');
               const ShopsRoute().push(context);
             },
           ),

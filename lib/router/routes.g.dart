@@ -47,6 +47,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
           path: 'shops',
           factory: $ShopsRouteExtension._fromState,
         ),
+        GoRouteData.$route(
+          path: 'payment',
+          factory: $PaymentRouteExtension._fromState,
+        ),
       ],
     );
 
@@ -90,6 +94,23 @@ extension $ShopsRouteExtension on ShopsRoute {
 
   String get location => GoRouteData.$location(
         '/shops',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $PaymentRouteExtension on PaymentRoute {
+  static PaymentRoute _fromState(GoRouterState state) => const PaymentRoute();
+
+  String get location => GoRouteData.$location(
+        '/payment',
       );
 
   void go(BuildContext context) => context.go(location);

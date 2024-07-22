@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ariane_mobile/auth/view/welcome_page.dart';
+import 'package:ariane_mobile/payment/view/payment_screen.dart';
 import 'package:ariane_mobile/shop/view/shops_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,7 @@ class SplashRoute extends GoRouteData {
   routes: [
     TypedGoRoute<ChatDetailRoute>(path: 'chat_detail'),
     TypedGoRoute<ShopsRoute>(path: 'shops'),
+    TypedGoRoute<PaymentRoute>(path: 'payment'),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -62,6 +64,15 @@ class ShopsRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const ShopsPage();
+  }
+}
+
+class PaymentRoute extends GoRouteData {
+  const PaymentRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const PaymentScreen();
   }
 }
 

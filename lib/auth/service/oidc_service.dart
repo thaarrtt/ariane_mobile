@@ -16,7 +16,7 @@ class OidcService {
   Future<void> init() async {
     manager = OidcUserManager.lazy(
       discoveryDocumentUri: OidcUtils.getOpenIdConfigWellKnownUri(
-        Uri.parse('https://ellesmere.arikassia.com'),
+        Uri.parse('https://ellesmere.up.railway.app'),
       ),
       clientCredentials: const OidcClientAuthentication.none(
         clientId: 'bafeb5ab6754137e26cc',
